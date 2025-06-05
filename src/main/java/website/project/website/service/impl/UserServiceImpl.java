@@ -7,11 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import website.project.website.convert.UserConvert;
+import website.project.website.domain.dto.LoginInfoDTO;
 import website.project.website.domain.dto.RegisterDTO;
 import website.project.website.domain.dto.UserDTO;
 import website.project.website.entity.UserDO;
 import website.project.website.mapper.UserMapper;
 import website.project.website.service.UserService;
+import website.project.website.utils.JwtUtil;
 
 import java.util.Objects;
 
@@ -46,6 +48,16 @@ public class UserServiceImpl implements UserService {
         //step2 插入用户信息
         UserDO registerUser = UserConvert.INSTANCE.registerDto2UserDO(registerDTO);
         userMapper.insert(registerUser);
+    }
+
+    @Override
+    public UserDTO login(LoginInfoDTO loginInfoDTO) {
+        UserDO userDO = userMapper.selectUserDoByAccount(loginInfoDTO.getAccount());
+        if (Objects.isNull(userDO)) {
+            log.info("账号或密码错误");
+            throw new RuntimeException("账号或密码错误");
+        }
+        return UserConvert.INSTANCE.userDo2Dto(userDO);
     }
 
     @Override

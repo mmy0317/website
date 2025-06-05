@@ -9,4 +9,8 @@
     <select id="selectByUserId" resultType="website.project.website.entity.UserDO">
         SELECT * FROM users WHERE user_id = #{userId}
     </select>
+
+    <select id="selectUserDoByAccountAndPassword" resultType="website.project.website.entity.UserDO">
+        SELECT * FROM users WHERE account = #{account} AND password = #{password}
+    </select>
 </mapper>

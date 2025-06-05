@@ -14,5 +14,7 @@ public interface UserMapper extends BaseMapper<UserDO>{
 
     UserDO selectUserDoByAccount(@Param("account") String account);
 
+    UserDO selectUserDoByAccountAndPassword(@Param("account") String account, @Param("password") String password);
+
     UserDO selectByUserId(@Param("userId") String userId);
 }
