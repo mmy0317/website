@@ -2,7 +2,9 @@ package website.project.website.controller;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
+import jdk.dynalink.beans.StaticClass;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import website.project.website.convert.UserConvert;
 import website.project.website.domain.dto.UserDTO;
@@ -29,8 +31,14 @@ public class LoginController {
     @Resource
     private UserService userService;
 
+    @Value("${password.aes.secretKey}")
+    private String AES_SECRET_KEY;
+
     @PostMapping("/login")
     public WebResponse<String> login(@RequestBody LoginParam loginParam, HttpServletResponse httpServletResponse){
+        //todo 记得删除
+        loginParam.setPassCode(aesEncryptTool(loginParam.getPassCode(),AES_SECRET_KEY));
+
         UserDTO userDTO = userService.login(UserConvert.INSTANCE.loginParam2LoginInfoDTO(loginParam));
         String token = JwtUtil.generateToken(userDTO.getUserId());
         httpServletResponse.addHeader("_security_token_",token);
@@ -41,6 +49,9 @@ public class LoginController {
     //RSA前端公钥加密, 后端私钥解密, 正则表达式校验密码格式, 数据针对密码加盐加密存储, 任何密码校验的明文处理都不应该在日志中展示
     @PostMapping("/register")
     public WebResponse<Void> register(@RequestBody RegisterParam registerParam){
+        //todo 记得删除
+        registerParam.setPassCode(aesEncryptTool(registerParam.getPassCode(),AES_SECRET_KEY));
+
         userService.register(UserConvert.INSTANCE.registerParam2RegisterDTO(registerParam));
         return WebResponse.success();
     }
@@ -65,19 +76,13 @@ public class LoginController {
         return WebResponse.success(keyMap);
     }
 
-    /**
-     * 测试加密密码方法(因为现在没有前端)
-     * @param password
-     * @return
-     */
-    @GetMapping("/aesEncrypt")
-    public WebResponse<String> aesEncryptTool(@RequestParam("password") String password){
+    private String aesEncryptTool(String password, String secretKey){
         try {
-            String aesEncrypt = AESUtil.encrypt(password, "/Xck9WLbCkQQ7zx6UjPZ7Q==");
-            return WebResponse.success(aesEncrypt);
+            String aesEncrypt = AESUtil.encrypt(password, secretKey);
+            return aesEncrypt;
         }catch (Exception e){
             log.error("AES加密失败",e);
-            return WebResponse.fail("AES加密失败");
+            return null;
         }
     }
 
