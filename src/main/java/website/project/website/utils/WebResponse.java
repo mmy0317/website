@@ -43,8 +43,8 @@ public class WebResponse<T> {
         return new WebResponse<>(200, "success", null, LocalDateTime.now());
     }
 
-    public static <T> WebResponse<T> fail(T data, String message) {
-        return new WebResponse<>(500, message, data, LocalDateTime.now());
+    public static <T> WebResponse<T> fail(String message) {
+        return new WebResponse<>(500, message, null, LocalDateTime.now());
     }
 
     public static <T> WebResponse<T> fail(T data, String message, Integer code) {
