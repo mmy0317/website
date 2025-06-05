@@ -6,6 +6,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
@@ -13,8 +14,11 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import website.project.website.domain.dto.LoginInfoDTO;
 import website.project.website.domain.dto.UserDTO;
 import website.project.website.service.UserService;
+import website.project.website.utils.AuthNHolder;
 import website.project.website.utils.JwtUtil;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -28,15 +32,14 @@ public class WebInterceptor implements HandlerInterceptor {
     @Resource
     private UserService userService;
 
-
-    private final PathMatcher matcher = new AntPathMatcher();
-
-    private final String includePatterns = "/basic/user/**";
-
     private final String TOKEN_CACHE_KEY = "TOKEN::CACHE::KEY";
+    
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 请求拦截器(验证token)
+     * todo 可以增加一个续费的逻辑, 时间不加在token上, 而是用redis存储
      * @param httpServletRequest
      * @param httpServletResponse
      * @param handler
@@ -45,6 +48,7 @@ public class WebInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) throws Exception {
+        AuthNHolder.clear();
         //step1 token校验
         String token = httpServletRequest.getHeader("_security_token_");
         if (Objects.isNull(token)) {
@@ -52,9 +56,31 @@ public class WebInterceptor implements HandlerInterceptor {
             return false;
         }
         Claims claims = JwtUtil.parseToken(token);
-        //step2 查询用户信息, 计入缓存 todo
-        UserDTO userDTO = userService.selectUserDtoByUserId(claims.getSubject());
+        String userId = claims.getSubject();
+        //step2 查询用户信息
+        UserDTO userDTO = userService.selectUserDtoByUserId(userId);
+        if (Objects.isNull(userDTO)) {
+            log.error("user is null");
+            return false;
+        }
+        //step3 当前线程缓存用户信息
+        AuthNHolder.set(objectToMap(userDTO));
         return true;
+    }
+
+    private static HashMap<String,String> objectToMap(Object o){
+        HashMap<String,String> map = new HashMap<>();
+        Class<?> clazz = o.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            try {
+                map.put(field.getName(), String.valueOf(field.get(o)));
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return map;
     }
 
 }

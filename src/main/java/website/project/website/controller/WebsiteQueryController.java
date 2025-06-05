@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import website.project.website.domain.dto.UserDTO;
 import website.project.website.service.UserService;
 import website.project.website.service.WebsiteQueryService;
+import website.project.website.utils.AuthNHolder;
 
 /**
  * 网页请求
@@ -26,7 +27,8 @@ public class WebsiteQueryController {
     private UserService userService;
 
     @GetMapping("/user")
-    public UserDTO user(@RequestParam("userId") String userId){
+    public UserDTO user(){
+        String userId = AuthNHolder.get("userId");
         UserDTO userDTO = userService.selectUserDtoByUserId(userId);
         log.info("测试拦截器");
         return userDTO;
