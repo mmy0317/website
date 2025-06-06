@@ -34,6 +34,27 @@ public class LoginController {
     @Value("${password.aes.secretKey}")
     private String AES_SECRET_KEY;
 
+    /**
+     * 用户注册
+     * @param registerParam
+     * @return
+     */
+    @PostMapping("/register")
+    public WebResponse<Void> register(@RequestBody RegisterParam registerParam){
+        //todo 记得删除
+        registerParam.setPassCode(aesEncryptTool(registerParam.getPassCode(),AES_SECRET_KEY));
+
+        userService.register(UserConvert.INSTANCE.registerParam2RegisterDTO(registerParam));
+        return WebResponse.success();
+    }
+
+
+    /**
+     * 用户登录
+     * @param loginParam
+     * @param httpServletResponse
+     * @return
+     */
     @PostMapping("/login")
     public WebResponse<String> login(@RequestBody LoginParam loginParam, HttpServletResponse httpServletResponse){
         //todo 记得删除
@@ -44,17 +65,6 @@ public class LoginController {
         httpServletResponse.addHeader("_security_token_",token);
         return WebResponse.success(token);
     }
-
-    @PostMapping("/register")
-    public WebResponse<Void> register(@RequestBody RegisterParam registerParam){
-        //todo 记得删除
-        registerParam.setPassCode(aesEncryptTool(registerParam.getPassCode(),AES_SECRET_KEY));
-
-        userService.register(UserConvert.INSTANCE.registerParam2RegisterDTO(registerParam));
-        return WebResponse.success();
-    }
-
-    //设置管理员账号, 严格掌控账号权限
 
     /**
      * 生成密钥工具方法

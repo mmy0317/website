@@ -1,15 +1,10 @@
-package website.project.website.domain.dto;
+package website.project.website.domain.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Builder;
+
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-public class UserDTO {
+public class UserVO {
 
     /**
      * 用户id
@@ -40,11 +35,5 @@ public class UserDTO {
      * 用户性别
      */
     private String gender;
-
-    /**
-     * 用户权限
-     */
-    private String permission;
-
 
 }

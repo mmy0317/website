@@ -7,6 +7,7 @@ import website.project.website.domain.dto.RegisterDTO;
 import website.project.website.domain.dto.UserDTO;
 import website.project.website.domain.param.LoginParam;
 import website.project.website.domain.param.RegisterParam;
+import website.project.website.domain.vo.UserVO;
 import website.project.website.entity.UserDO;
 
 @Mapper
@@ -21,4 +22,6 @@ public interface UserConvert {
     UserDTO userDo2Dto(UserDO userDO);
 
     LoginInfoDTO loginParam2LoginInfoDTO(LoginParam loginParam);
+
+    UserVO userDto2Vo(UserDTO userDTO);
 }
