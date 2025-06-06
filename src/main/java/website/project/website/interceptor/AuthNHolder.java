@@ -1,4 +1,4 @@
-package website.project.website.utils;
+package website.project.website.interceptor;
 
 import org.springframework.util.CollectionUtils;
 

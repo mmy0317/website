@@ -29,4 +29,13 @@ public class UserDO {
     @TableField("gender")
     private String gender;
 
+    /**
+     * 用户权限
+     * 0-ROOT 超级管理员
+     * 1-ADMIN 管理员
+     * 2-ORDINARY 普通用户
+     */
+    @TableField("permission")
+    private String permission;
+
 }

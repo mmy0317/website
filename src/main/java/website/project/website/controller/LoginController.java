@@ -45,8 +45,6 @@ public class LoginController {
         return WebResponse.success(token);
     }
 
-
-    //RSA前端公钥加密, 后端私钥解密, 正则表达式校验密码格式, 数据针对密码加盐加密存储, 任何密码校验的明文处理都不应该在日志中展示
     @PostMapping("/register")
     public WebResponse<Void> register(@RequestBody RegisterParam registerParam){
         //todo 记得删除

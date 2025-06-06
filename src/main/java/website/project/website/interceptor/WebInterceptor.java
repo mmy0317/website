@@ -1,6 +1,5 @@
 package website.project.website.interceptor;
 
-import com.alibaba.fastjson2.JSONObject;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,13 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
-import website.project.website.domain.dto.LoginInfoDTO;
 import website.project.website.domain.dto.UserDTO;
 import website.project.website.service.UserService;
-import website.project.website.utils.AuthNHolder;
 import website.project.website.utils.JwtUtil;
 
 import java.lang.reflect.Field;
@@ -52,7 +47,8 @@ public class WebInterceptor implements HandlerInterceptor {
         //step1 token校验
         String token = httpServletRequest.getHeader("_security_token_");
         if (Objects.isNull(token)) {
-            log.error("token is null");
+            httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            httpServletResponse.getWriter().write("{\"code\":500,\"message\":\"token is null\"}");
             return false;
         }
         Claims claims = JwtUtil.parseToken(token);
@@ -60,7 +56,8 @@ public class WebInterceptor implements HandlerInterceptor {
         //step2 查询用户信息
         UserDTO userDTO = userService.selectUserDtoByUserId(userId);
         if (Objects.isNull(userDTO)) {
-            log.error("user is null");
+            httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            httpServletResponse.getWriter().write("{\"code\":500,\"message\":\"user is null\"}");
             return false;
         }
         //step3 当前线程缓存用户信息

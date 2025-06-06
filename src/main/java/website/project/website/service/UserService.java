@@ -20,6 +20,11 @@ public interface UserService {
      */
     UserDTO login(LoginInfoDTO loginInfoDTO);
 
+    /**
+     * 根据userId查询详情
+     * @param userId
+     * @return
+     */
     UserDTO selectUserDtoByUserId(String userId);
 
 }

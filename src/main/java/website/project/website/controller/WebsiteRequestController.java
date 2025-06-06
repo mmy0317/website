@@ -6,18 +6,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import website.project.website.domain.dto.UserDTO;
+import website.project.website.interceptor.AuthNHolder;
 import website.project.website.service.UserService;
 import website.project.website.service.WebsiteQueryService;
-import website.project.website.interceptor.AuthNHolder;
 
 /**
- * 管理员后台权限查询请求控制器
+ * 管理员后台权限操作请求控制器
  * @author mayang
  */
 @Slf4j
 @RestController
-@RequestMapping("/website/query")
-public class WebsiteQueryController {
+@RequestMapping("/website/request")
+public class WebsiteRequestController {
 
     @Resource
     private WebsiteQueryService websiteQueryService;
