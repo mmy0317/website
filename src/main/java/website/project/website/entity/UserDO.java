@@ -17,6 +17,9 @@ public class UserDO {
     @TableField("account")
     private String account;
 
+    @TableField("password")
+    private String password;
+
     @TableField("nick_name")
     private String nickName;
 

@@ -1,8 +1,10 @@
 package website.project.website.service.impl;
 
+import io.micrometer.common.util.StringUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import website.project.website.convert.UserConvert;
@@ -31,11 +33,16 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userMapper;
 
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
     @Value("${password.rsa.privateKey}")
     private String RSA_PRIVATE_KEY;
 
     @Value("${password.aes.secretKey}")
     private String SECRET_KEY;
+
+    private final String VERIFY_CODE_KEY = "VERIFY::CODE::KEY::";
 
     /**
      * 用户密码正则校验: 至少8位，含大写字母和数字
@@ -45,23 +52,25 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor=Exception.class)
     public void register(RegisterDTO registerDTO) {
-        //step1 参数校验
+        //step1 手机短信验证码校验
+        verifyCodeCheck(registerDTO.getPhone(),registerDTO.getVerifyCode());
+        //step2 参数校验
         UserDO userDO = userMapper.selectUserDoByAccount(registerDTO.getAccount());
         if (Objects.nonNull(userDO)) {
             log.info("当前账号已注册");
             throw new RuntimeException("当前账号已注册");
         }
-        //step2 解密用户信息
+        //step3 用户密码处理解加密
         String pwd = decryptPasswordRSA(registerDTO.getPassCode(),registerDTO.getAccount());
-        //step3 密码信息正则校验
         Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
         Matcher matcher = pattern.matcher(pwd);
         if (!matcher.matches()){
             throw new RuntimeException("密码过于简单, 至少8位，含大写字母和数字");
         }
-        //step4 密码加密存储
         registerDTO.setPassCode(encryptPasswordAES(pwd,registerDTO.getAccount()));
-        //step5 数据存储
+        //step4 生成用户唯一ID todo @mayang
+
+        //step6 数据存储
         UserDO registerUser = UserConvert.INSTANCE.registerDto2UserDO(registerDTO);
         userMapper.insert(registerUser);
     }
@@ -78,6 +87,22 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("账号或密码错误");
         }
         return UserConvert.INSTANCE.userDo2Dto(userDO);
+    }
+
+    /**
+     * 短信验证码校验
+     * @param phoneNumber 手机号
+     * @param verifyCode 验证码
+     */
+    private void verifyCodeCheck(String phoneNumber, String verifyCode){
+        String value = stringRedisTemplate.opsForValue().get(VERIFY_CODE_KEY + phoneNumber);
+        if (StringUtils.isBlank(value)){
+            throw new RuntimeException("短信验证码已过期, 请重新发送");
+        }
+        if (Objects.equals(value,verifyCode)){
+            throw new RuntimeException("短信验证码错误, 请重新输入");
+        }
+        stringRedisTemplate.delete(VERIFY_CODE_KEY + phoneNumber);
     }
 
     private String decryptPasswordRSA(String password, String account){
