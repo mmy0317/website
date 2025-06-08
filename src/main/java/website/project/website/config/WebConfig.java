@@ -23,7 +23,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns(            // 排除路径
                         "/login",
                         "/register",
-                        "/rsaKey"
+                        "/rsaKey",
+                        "/actuator/health"
                 ).order(1); // 拦截器执行顺序（值越小优先级越高）
 
         registry.addInterceptor(permissionInterceptor)
@@ -31,7 +32,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns(            // 排除路径
                         "/login",
                         "/register",
-                        "/rsaKey"
+                        "/rsaKey",
+                        "/actuator/health"
                 ).order(2); // 拦截器执行顺序（值越小优先级越高）
 
 
