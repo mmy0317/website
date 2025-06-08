@@ -66,23 +66,23 @@ public class LoginController {
 
 
 
-//    /**
-//     * 生成密钥工具方法
-//     * @return
-//     */
-//    @GetMapping("/rsaKey")
-//    public WebResponse<Map<String,String>> buildRsaKeyTool(){
-//        Map<String,String> keyMap = new HashMap<>();
-//        try{
-//            keyMap = RSAUtil.generateKeyPair();
-//            String key = AESUtil.getSecretKey();
-//            keyMap.put("aes",key);
-//        }catch (Exception e){
-//            log.error("生成RSA密钥对失败",e);
-//            return WebResponse.fail("生成RSA密钥对失败");
-//        }
-//        return WebResponse.success(keyMap);
-//    }
+    /**
+     * 生成密钥工具方法
+     * @return
+     */
+    @GetMapping("/rsaKey")
+    public WebResponse<Map<String,String>> buildRsaKeyTool(){
+        Map<String,String> keyMap = new HashMap<>();
+        try{
+            keyMap = RSAUtil.generateKeyPair();
+            String key = AESUtil.getSecretKey();
+            keyMap.put("aes",key);
+        }catch (Exception e){
+            log.error("生成RSA密钥对失败",e);
+            return WebResponse.fail("生成RSA密钥对失败");
+        }
+        return WebResponse.success(keyMap);
+    }
 
     private String aesEncryptTool(String password, String secretKey){
         try {
