@@ -24,7 +24,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/login",
                         "/register",
                         "/rsaKey",
-                        "/actuator/health"
+                        "/actuator/health",
+                        "/error"
                 ).order(1); // 拦截器执行顺序（值越小优先级越高）
 
         registry.addInterceptor(permissionInterceptor)
@@ -33,7 +34,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/login",
                         "/register",
                         "/rsaKey",
-                        "/actuator/health"
+                        "/actuator/health",
+                        "/error"
                 ).order(2); // 拦截器执行顺序（值越小优先级越高）
 
 
