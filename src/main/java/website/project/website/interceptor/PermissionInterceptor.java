@@ -6,8 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import website.project.website.enums.PermissionEnum;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 权限拦截器
@@ -29,8 +28,17 @@ public class PermissionInterceptor implements HandlerInterceptor {
             response.getWriter().write("{\"code\":403,\"message\":\"权限不足\"}");
             return false;
         }
-        //step4 管理员权限 todo @mayang 暂时没有
-
+        //step4 管理员权限
+        if (requestURI.contains("/website/operate") && !PermissionEnum.ADMIN.name().equals(permission)){
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("{\"code\":403,\"message\":\"权限不足\"}");
+            return false;
+        }
+        if (requestURI.contains("/website/query") && !PermissionEnum.ADMIN.name().equals(permission)){
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("{\"code\":403,\"message\":\"权限不足\"}");
+            return false;
+        }
         return true;
     }
 

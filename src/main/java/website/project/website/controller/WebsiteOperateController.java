@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
-@RequestMapping("/website/request")
-public class WebsiteRequestController {
+@RequestMapping("/website/operate")
+public class WebsiteOperateController {
 
 }
