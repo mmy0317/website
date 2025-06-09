@@ -5,6 +5,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import cn.hutool.core.codec.Base64;
 import io.micrometer.common.util.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
@@ -44,6 +45,9 @@ public class AESUtil {
      * AES对称解密
      */
     public static String decrypt(String data, String key) throws Exception {
+        if (StringUtils.isBlank(data) || StringUtils.isBlank(key)){
+            return Strings.EMPTY;
+        }
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(), "AES");
         cipher.init(Cipher.DECRYPT_MODE, keySpec);
