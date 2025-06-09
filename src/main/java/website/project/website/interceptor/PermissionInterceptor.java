@@ -23,12 +23,14 @@ public class PermissionInterceptor implements HandlerInterceptor {
         String permission = user.get("permission");
         //step2 获取当前用户请求路径
         String requestURI = request.getRequestURI();
-        //step3 权限校验
-        if (requestURI.contains("/website") && !PermissionEnum.ADMIN.name().equals(permission)){
+        //step3 超级管理员权限
+        if (requestURI.contains("/administrator/operate") && !PermissionEnum.ROOT.name().equals(permission)){
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write("{\"code\":403,\"message\":\"权限不足\"}");
             return false;
         }
+        //step4 管理员权限 todo @mayang 暂时没有
+
         return true;
     }
 

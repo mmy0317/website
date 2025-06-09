@@ -51,9 +51,9 @@ public class WebInterceptor implements HandlerInterceptor {
             httpServletResponse.getWriter().write("{\"code\":500,\"message\":\"token is null\"}");
             return false;
         }
+        //step2 查询用户信息
         Claims claims = JwtUtil.parseToken(token);
         String userId = claims.getSubject();
-        //step2 查询用户信息
         UserDTO userDTO = userService.selectUserDtoByUserId(userId);
         if (Objects.isNull(userDTO)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
