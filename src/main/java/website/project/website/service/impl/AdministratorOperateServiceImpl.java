@@ -15,6 +15,8 @@ import website.project.website.utils.AESUtil;
 import website.project.website.utils.RSAUtil;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
@@ -35,6 +37,11 @@ public class AdministratorOperateServiceImpl implements AdministratorOperateServ
     @Value("${password.aes.secretKey}")
     private String SECRET_KEY;
 
+    /**
+     * 用户密码正则校验: 至少8位，含大写字母和数字
+     */
+    private static final String PASSWORD_PATTERN = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$";
+
     @Override
     public void addAdministratorUser(String name, String mobilePhone, String password) {
         //step1 根据手机号查询用户信息
@@ -44,16 +51,22 @@ public class AdministratorOperateServiceImpl implements AdministratorOperateServ
         }
         //step2 生成用户唯一ID todo @mayang 暂时先用手机号
         String userId = mobilePhone;
-        //step3 用户密码对称加密
+        //step3 密码格式正则校验
+        Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
+        Matcher matcher = pattern.matcher(password);
+        if (!matcher.matches()){
+            throw new RuntimeException("密码过于简单, 至少8位，含大写字母和数字");
+        }
+        //step4 用户密码对称加密
         String secretPassword = encryptPasswordAES(password);
-        //step4 创建用户
+        //step5 创建用户
         UserDO createUserDO = UserDO.builder().build();
         createUserDO.setUserId(userId);
         createUserDO.setName(name);
         createUserDO.setPassword(secretPassword);
         createUserDO.setPhone(mobilePhone);
         userMapper.insert(createUserDO);
-        //step5 记录操作日志 todo @mayang
+        //step6 记录操作日志 todo @mayang
     }
 
     @Override
