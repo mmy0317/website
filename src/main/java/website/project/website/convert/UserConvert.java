@@ -4,10 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
-import website.project.website.domain.dto.LoginInfoDTO;
 import website.project.website.domain.dto.UserDTO;
-import website.project.website.domain.param.LoginParam;
-import website.project.website.domain.vo.UserVO;
 import website.project.website.entity.UserDO;
 
 @Mapper
