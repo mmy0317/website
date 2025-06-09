@@ -17,4 +17,13 @@ public enum AdministratorStateEnum {
     private Integer code;
 
     private String desc;
+
+    public static AdministratorStateEnum getEnumByCode(Integer code) {
+        for (AdministratorStateEnum value : values()) {
+            if (value.getCode().equals(code)) {
+                return value;
+            }
+        }
+        return null;
+    }
 }

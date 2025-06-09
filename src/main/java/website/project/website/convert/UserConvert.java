@@ -1,6 +1,8 @@
 package website.project.website.convert;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 import website.project.website.domain.dto.LoginInfoDTO;
 import website.project.website.domain.dto.UserDTO;
@@ -13,9 +15,10 @@ public interface UserConvert {
 
     UserConvert INSTANCE = Mappers.getMapper(UserConvert.class);
 
+    @Mappings({
+            @Mapping(expression="java(website.project.website.enums.PermissionEnum.getEnumByName(userDO.getPermission()))",target="permission"),
+            @Mapping(expression="java(website.project.website.enums.AdministratorStateEnum.getEnumByCode(userDO.getState()))",target="state")
+    })
     UserDTO userDoToDto(UserDO userDO);
 
-    LoginInfoDTO loginParam2LoginInfoDTO(LoginParam loginParam);
-
-    UserVO userDto2Vo(UserDTO userDTO);
 }

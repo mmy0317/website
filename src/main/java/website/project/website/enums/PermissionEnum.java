@@ -23,5 +23,13 @@ public enum PermissionEnum {
 
     private String permission;
 
+    public static PermissionEnum getEnumByName(String name){
+        for (PermissionEnum permissionEnum : PermissionEnum.values()) {
+            if (permissionEnum.name().equals(name)) {
+                return permissionEnum;
+            }
+        }
+        return null;
+    }
 
 }
