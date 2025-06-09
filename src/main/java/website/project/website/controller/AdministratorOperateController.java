@@ -3,6 +3,7 @@ package website.project.website.controller;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 import website.project.website.domain.param.AdministratorAddParam;
+import website.project.website.domain.vo.UserVO;
 import website.project.website.service.AdministratorOperateService;
 import website.project.website.utils.WebResponse;
 
@@ -39,6 +40,11 @@ public class AdministratorOperateController {
         return WebResponse.success();
     }
 
+
+    @GetMapping("/delUser")
+    public WebResponse<String> test(){
+        return WebResponse.success("成功");
+    }
 
 
 }
