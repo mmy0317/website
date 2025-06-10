@@ -36,6 +36,12 @@ public class LoginController {
         httpServletResponse.setHeader("_security_token_",JwtUtil.generateToken(userDTO.getUserId()));
     }
 
+    @GetMapping("/test")
+    public WebResponse<String> test(){
+        return WebResponse.success("成功");
+    }
+
+
 
 
 }

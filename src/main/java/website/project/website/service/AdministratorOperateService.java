@@ -17,4 +17,10 @@ public interface AdministratorOperateService {
      */
     void delAdministratorUser(String userId);
 
+    /**
+     * 查询管理员用户账户密码
+     * @param userId
+     * @return
+     */
+    String getAdministratorUserPwd(String userId);
 }

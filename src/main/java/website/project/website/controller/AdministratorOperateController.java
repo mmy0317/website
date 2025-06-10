@@ -9,6 +9,7 @@ import website.project.website.utils.WebResponse;
 
 /**
  * 管理员用户操作
+ * 当前controller中所有操作都需要root权限
  * @author mayang
  */
 @RestController
@@ -19,7 +20,7 @@ public class AdministratorOperateController {
     private AdministratorOperateService administratorUserService;
 
     /**
-     * 增加管理员用户
+     * 创建管理员用户
      * @param param
      * @return
      */
@@ -30,7 +31,7 @@ public class AdministratorOperateController {
     }
 
     /**
-     * 删除管理员用户
+     * 注销管理员用户
      * @param userId
      * @return
      */
@@ -40,11 +41,17 @@ public class AdministratorOperateController {
         return WebResponse.success();
     }
 
-
-    @GetMapping("/test")
-    public WebResponse<String> test(){
-        return WebResponse.success("成功");
+    /**
+     * 查询管理员用户明文密码
+     * @param userId
+     * @return
+     */
+    @GetMapping("/getUserPwd")
+    public WebResponse<String> getAdministratorUserPwd(@RequestParam("userId") String userId){
+        String result = administratorUserService.getAdministratorUserPwd(userId);
+        return WebResponse.success(result);
     }
+
 
 
 }

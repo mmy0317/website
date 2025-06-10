@@ -52,13 +52,14 @@ public class AdministratorOperateServiceImpl implements AdministratorOperateServ
         //step2 生成用户唯一ID todo @mayang 暂时先用手机号
         String userId = mobilePhone;
         //step3 密码格式正则校验
+        String decryptPassword = decryptPasswordRSA(password);
         Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
-        Matcher matcher = pattern.matcher(password);
+        Matcher matcher = pattern.matcher(decryptPassword);
         if (!matcher.matches()){
             throw new RuntimeException("密码过于简单, 至少8位，含大写字母和数字");
         }
         //step4 用户密码对称加密
-        String secretPassword = encryptPasswordAES(password);
+        String secretPassword = encryptPasswordAES(decryptPassword);
         //step5 创建用户
         UserDO createUserDO = UserDO.builder().build();
         createUserDO.setUserId(userId);
@@ -73,6 +74,22 @@ public class AdministratorOperateServiceImpl implements AdministratorOperateServ
     @Transactional(rollbackFor=Exception.class)
     public void delAdministratorUser(String userId) {
         //step1 查询当前用户信息
+        UserDO userDO = administratorUserCheck(userId);
+        //step2 更新当前用户状态
+        userDO.setState(AdministratorStateEnum.DELETE.getCode());
+        userMapper.update(userDO,null);
+        //step3 记录操作日志 todo @mayang
+    }
+
+    @Override
+    public String getAdministratorUserPwd(String userId) {
+        //step1 查询用户信息
+        UserDO userDO = administratorUserCheck(userId);
+        //step2 解密用户密码
+        return decryptPasswordAES(userDO.getPassword());
+    }
+
+    private UserDO administratorUserCheck(String userId){
         UserDO userDO = userMapper.selectByUserId(userId);
         if (Objects.isNull(userDO)){
             throw new RuntimeException("用户:" + userId +" 不存在");
@@ -80,23 +97,25 @@ public class AdministratorOperateServiceImpl implements AdministratorOperateServ
         if (!PermissionEnum.ADMIN.name().equals(userDO.getPermission())){
             throw new RuntimeException("用户:" + userId +" 不是管理员,无法删除");
         }
-        //step2 更新当前用户状态
-        userDO.setState(AdministratorStateEnum.DELETE.getCode());
-        userMapper.update(userDO,null);
-        //step3 记录操作日志 todo @mayang
+        return userDO;
     }
 
-    private String decryptPasswordRSA(String password, String account){
+    /**
+     * 非对称加密-解密
+     * @param secretPassword
+     * @return
+     */
+    private String decryptPasswordRSA(String secretPassword){
         try {
-            return RSAUtil.decrypt(password, RSA_PRIVATE_KEY);
+            return RSAUtil.decrypt(secretPassword, RSA_PRIVATE_KEY);
         }catch (Exception e){
-            log.error("用户注册, 私密信息解密失败, 注册account:{}", account);
+            log.error("用户信息解密失败");
             throw new RuntimeException("网络繁忙, 请稍后重试");
         }
     }
 
     /**
-     * 对称加密
+     * 对称加密-加密
      * @param password
      * @return
      */
@@ -105,6 +124,20 @@ public class AdministratorOperateServiceImpl implements AdministratorOperateServ
             return AESUtil.encrypt(password, SECRET_KEY);
         }catch (Exception e){
             log.error("用户信息加密失败");
+            throw new RuntimeException("网络繁忙, 请稍后重试");
+        }
+    }
+
+    /**
+     * 对称加密-解密
+     * @param secretPassword
+     * @return
+     */
+    private String decryptPasswordAES(String secretPassword){
+        try {
+            return AESUtil.decrypt(secretPassword, SECRET_KEY);
+        }catch (Exception e){
+            log.error("用户信息解密失败");
             throw new RuntimeException("网络繁忙, 请稍后重试");
         }
     }
