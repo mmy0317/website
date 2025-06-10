@@ -41,7 +41,7 @@ public class AdministratorOperateController {
     }
 
 
-    @GetMapping("/delUser")
+    @GetMapping("/test")
     public WebResponse<String> test(){
         return WebResponse.success("成功");
     }
