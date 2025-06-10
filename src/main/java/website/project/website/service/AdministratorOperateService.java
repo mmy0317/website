@@ -1,5 +1,11 @@
 package website.project.website.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import website.project.website.domain.dto.AdministratorPageDTO;
+import website.project.website.domain.dto.UserDTO;
+
+import java.util.List;
+
 public interface AdministratorOperateService {
 
     /**
@@ -23,4 +29,11 @@ public interface AdministratorOperateService {
      * @return
      */
     String getAdministratorUserPwd(String userId);
+
+    /**
+     * 管理员用户分页查询
+     * @param administratorPageDTO
+     * @return
+     */
+    Page<UserDTO> queryAdministratorUserPage(AdministratorPageDTO administratorPageDTO);
 }

@@ -9,4 +9,14 @@
     <select id="selectByPhone" resultType="website.project.website.entity.UserDO">
         SELECT * FROM users WHERE phone = #{mobilePhone}
     </select>
+
+    <select id="selectAdministratorPage" resultType="website.project.website.entity.UserDO">
+        SELECT * FROM users
+        WHERE permission = 'ADMIN'
+            <if test="dto.searchValue != null and dto.searchValue != ''">
+                AND (name LIKE CONCAT('%', #{dto.searchValue}, '%')
+                    OR phone LIKE CONCAT('%', #{dto.searchValue}, '%'))
+            </if>
+        ORDER BY create_time DESC
+    </select>
 </mapper>

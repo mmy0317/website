@@ -1,11 +1,17 @@
 package website.project.website.service.impl;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import website.project.website.convert.UserConvert;
+import website.project.website.domain.dto.AdministratorPageDTO;
+import website.project.website.domain.dto.UserDTO;
 import website.project.website.entity.UserDO;
 import website.project.website.enums.AdministratorStateEnum;
 import website.project.website.enums.PermissionEnum;
@@ -87,6 +93,22 @@ public class AdministratorOperateServiceImpl implements AdministratorOperateServ
         UserDO userDO = administratorUserCheck(userId);
         //step2 解密用户密码
         return decryptPasswordAES(userDO.getPassword());
+    }
+
+    @Override
+    public Page<UserDTO> queryAdministratorUserPage(AdministratorPageDTO administratorPageDTO) {
+        //step1 构建结果
+        Page<UserDTO> userDTOPage = new Page<>(administratorPageDTO.getPage(), administratorPageDTO.getSize());
+        //step2 分页查询
+        Page<UserDO> page = new Page<>(administratorPageDTO.getPage(), administratorPageDTO.getSize());
+        IPage<UserDO> userDOIPage = userMapper.selectAdministratorPage(page, administratorPageDTO);
+        //step3 处理查询结果
+        if (CollectionUtils.isEmpty(userDOIPage.getRecords())){
+            return new Page<>(administratorPageDTO.getPage(), administratorPageDTO.getSize());
+        }
+        userDTOPage.setTotal(userDOIPage.getTotal());
+        userDTOPage.setRecords(UserConvert.INSTANCE.userDoListToDtoList(userDOIPage.getRecords()));
+        return userDTOPage;
     }
 
     private UserDO administratorUserCheck(String userId){
