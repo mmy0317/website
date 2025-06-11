@@ -33,6 +33,8 @@ public class LoginController {
     public void login(@RequestBody LoginParam loginParam, HttpServletResponse httpServletResponse){
         LoginInfoDTO loginInfoDTO = CommonConvert.INSTANCE.loginParamToDTO(loginParam);
         UserDTO userDTO = loginService.login(loginInfoDTO);
+        String token = JwtUtil.generateToken(userDTO.getUserId());
+        //todo 查询缓存, 如果缓存有这个user_id的token, 更新缓存, 没有则插入, 做单点登录
         httpServletResponse.setHeader("_security_token_",JwtUtil.generateToken(userDTO.getUserId()));
     }
 

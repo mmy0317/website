@@ -28,7 +28,7 @@ public class WebInterceptor implements HandlerInterceptor {
     @Resource
     private UserService userService;
 
-    private final String TOKEN_CACHE_KEY = "TOKEN::CACHE::KEY";
+    private final String TOKEN_CACHE_KEY = "TOKEN::CACHE::KEY::";
     
     @Resource
     private StringRedisTemplate stringRedisTemplate;
@@ -59,8 +59,15 @@ public class WebInterceptor implements HandlerInterceptor {
             httpServletResponse.getWriter().write("{\"code\":500,\"message\":\"token is expired\"}");
             return false;
         }
-        //step3 用户信息查询
+        //step3 单点登录处理
         String userId = claims.getSubject();
+        String value = stringRedisTemplate.opsForValue().get("TOKEN_CACHE_KEY" + userId);
+        if (!Objects.equals(value, token)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            httpServletResponse.getWriter().write("{\"code\":500,\"message\":\"token is invalid\"}");
+            return false;
+        }
+        //step3 用户信息查询
         UserDTO userDTO = userService.selectUserDtoByUserId(userId);
         if (Objects.isNull(userDTO)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
