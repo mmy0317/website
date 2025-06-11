@@ -26,23 +26,4 @@ import java.util.List;
 @RequestMapping("/website/query")
 public class WebsiteQueryController {
 
-    @Resource
-    private AdministratorOperateService administratorOperateService;
-
-    /**
-     * 分页查询管理员用户信息
-     * @return
-     */
-    @PostMapping("/administrator/page")
-    public WebResponse<Page<UserVO>> queryAdministratorUserPage(@RequestBody AdministratorPageParam administratorPageParam){
-        Page<UserVO> result = new Page<>(administratorPageParam.getPage(),administratorPageParam.getPage());
-        Page<UserDTO> resultPage = administratorOperateService.queryAdministratorUserPage(UserConvert.INSTANCE.AdministratorPageParamToDto(administratorPageParam));
-        if (CollectionUtils.isEmpty(resultPage.getRecords())){
-            return WebResponse.success(result);
-        }
-        result.setTotal(resultPage.getTotal());
-        result.setRecords(UserConvert.INSTANCE.userDtoListToVoList(resultPage.getRecords()));
-        return WebResponse.success(result);
-    }
-
 }
