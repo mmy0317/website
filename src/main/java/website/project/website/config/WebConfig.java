@@ -18,23 +18,23 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(webInterceptor)
-                .addPathPatterns("/**")          // 拦截所有路径
-                .excludePathPatterns(            // 排除路径
-                        "/login",
-                        "/actuator/health",
-                        "/test",
-                        "/test/getRoot"
-                ).order(1); // 拦截器执行顺序（值越小优先级越高）
-
-        registry.addInterceptor(permissionInterceptor)
-                .addPathPatterns("/**")          // 拦截所有路径
-                .excludePathPatterns(            // 排除路径
-                        "/login",
-                        "/actuator/health",
-                        "/test",
-                        "/test/getRoot"
-                ).order(2); // 拦截器执行顺序（值越小优先级越高）
+//        registry.addInterceptor(webInterceptor)
+//                .addPathPatterns("/**")          // 拦截所有路径
+//                .excludePathPatterns(            // 排除路径
+//                        "/login",
+//                        "/actuator/health",
+//                        "/test",
+//                        "/test/getRoot"
+//                ).order(1); // 拦截器执行顺序（值越小优先级越高）
+//
+//        registry.addInterceptor(permissionInterceptor)
+//                .addPathPatterns("/**")          // 拦截所有路径
+//                .excludePathPatterns(            // 排除路径
+//                        "/login",
+//                        "/actuator/health",
+//                        "/test",
+//                        "/test/getRoot"
+//                ).order(2); // 拦截器执行顺序（值越小优先级越高）
 
 
     }
