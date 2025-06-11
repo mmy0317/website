@@ -28,4 +28,4 @@ public class BusinessShopOperateDTO {
     private String address;
 }
 
-}
+
