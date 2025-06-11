@@ -1,4 +1,4 @@
-package website.project.website.controller;
+package website.project.website.controller.background;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;

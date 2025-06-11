@@ -1,13 +1,11 @@
-package website.project.website.controller;
+package website.project.website.controller.background;
 
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.WebRequest;
 import website.project.website.convert.MerchandiseConvert;
-import website.project.website.domain.dto.AdministratorPageDTO;
 import website.project.website.domain.dto.MerchandisePageDTO;
 import website.project.website.domain.param.MerchandisePageParam;
 import website.project.website.service.MerchandiseService;

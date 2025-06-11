@@ -42,6 +42,10 @@ public class LoginController {
     }
 
 
+    @GetMapping("/test/getRoot")
+    public WebResponse<String> getRoot(){
+        return WebResponse.success(JwtUtil.generateToken("00001"));
+    }
 
 
 }
