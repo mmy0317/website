@@ -13,6 +13,7 @@ import website.project.website.service.UserService;
 import website.project.website.utils.JwtUtil;
 
 import java.lang.reflect.Field;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -51,8 +52,14 @@ public class WebInterceptor implements HandlerInterceptor {
             httpServletResponse.getWriter().write("{\"code\":500,\"message\":\"token is null\"}");
             return false;
         }
-        //step2 查询用户信息
+        //step2 token校验
         Claims claims = JwtUtil.parseToken(token);
+        if (claims.getExpiration().before(new Date())) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            httpServletResponse.getWriter().write("{\"code\":500,\"message\":\"token is expired\"}");
+            return false;
+        }
+        //step3 用户信息查询
         String userId = claims.getSubject();
         UserDTO userDTO = userService.selectUserDtoByUserId(userId);
         if (Objects.isNull(userDTO)) {
@@ -60,7 +67,7 @@ public class WebInterceptor implements HandlerInterceptor {
             httpServletResponse.getWriter().write("{\"code\":500,\"message\":\"user is null\"}");
             return false;
         }
-        //step3 当前线程缓存用户信息
+        //step4 当前线程缓存用户信息
         AuthNHolder.set(objectToMap(userDTO));
         return true;
     }

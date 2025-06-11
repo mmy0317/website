@@ -9,7 +9,7 @@ public class JwtUtil {
 
 
     private static final Key SECRET_KEY = Keys.hmacShaKeyFor("IU$S&39S%57!kYs@NcIU$S&39S%57!kYs@NcIU$S&39S%57!kYs@Nc".getBytes());
-    private static final long EXPIRATION_MS = 3600000; // 1小时
+    private static final long EXPIRATION_MS = 3600000 * 48; // 48小时
 
     /**
      * 生成JWT
